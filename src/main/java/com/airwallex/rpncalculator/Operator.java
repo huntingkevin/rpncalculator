@@ -1,6 +1,7 @@
 package com.airwallex.rpncalculator;
 
 import com.airwallex.rpncalculator.exception.InsucientParametersException;
+import com.airwallex.rpncalculator.exception.InvalidOperatorException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -34,9 +35,9 @@ public enum Operator {
     },
 
     DIVISION("/", "*", 2) {
-        public Double calculate(Double firstOperand, Double secondOperand) throws InsucientParametersException {
+        public Double calculate(Double firstOperand, Double secondOperand) throws InvalidOperatorException {
             if (firstOperand == 0)
-                throw new InsucientParametersException("Cannot divide by 0.");
+                throw new InvalidOperatorException("Cannot divide by 0.");
             return secondOperand / firstOperand;
         }
     },
@@ -54,18 +55,18 @@ public enum Operator {
     },
 
     UNDO("undo", null, 0) {
-        public Double calculate(Double firstOperand, Double secondOperand) throws InsucientParametersException {
-            throw new InsucientParametersException("Invalid operation");
+        public Double calculate(Double firstOperand, Double secondOperand) throws InvalidOperatorException {
+            throw new InvalidOperatorException("Invalid operation");
         }
     },
 
     CLEAR("clear", null, 0) {
-        public Double calculate(Double firstOperand, Double secondOperand) throws InsucientParametersException {
-            throw new InsucientParametersException("Invalid operation");
+        public Double calculate(Double firstOperand, Double secondOperand) throws InvalidOperatorException {
+            throw new InvalidOperatorException("Invalid operation");
         }
     };
     // using map for a constant lookup cost
-    private static final Map<String, Operator> lookup = new HashMap<String, Operator>();
+    private static final Map<String, Operator> lookup = new HashMap<>();
 
     static {
         for (Operator o : values()) {
@@ -87,7 +88,7 @@ public enum Operator {
         return lookup.get(value);
     }
 
-    public abstract Double calculate(Double firstOperand, Double secondOperand) throws InsucientParametersException;
+    public abstract Double calculate(Double firstOperand, Double secondOperand) throws InsucientParametersException, InvalidOperatorException;
 
     public String getSymbol() {
         return symbol;

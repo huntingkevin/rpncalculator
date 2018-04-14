@@ -4,6 +4,17 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <!--<bean class=""/>-->
+    <bean id="calculator" class="com.airwallex.rpncalculator.impl.CalculatorImpl">
+        <property name="parser" ref="inputParser" />
+        <property name="operandStack" ref="operandStack" />
+    </bean>
+
+    <bean id="inputParser" class="com.airwallex.rpncalculator.impl.InputParser">
+        <property name="operandStack" ref="operandStack" />
+        <property name="historyStack" ref="historyStack" />
+    </bean>
+
+    <bean id="operandStack" class="java.util.Stack" />
+    <bean id="historyStack" class="java.util.Stack" />
 
 </beans>

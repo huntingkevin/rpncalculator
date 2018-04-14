@@ -9,5 +9,5 @@ import com.airwallex.rpncalculator.exception.InsucientParametersException;
  * @create: 2018-04-14
  **/
 public interface Parser {
-    void parse(String input) throws InsucientParametersException;
+    void parse(String input) throws Exception;
 }

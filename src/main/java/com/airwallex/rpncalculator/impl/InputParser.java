@@ -3,7 +3,9 @@ package com.airwallex.rpncalculator.impl;
 import com.airwallex.rpncalculator.Operator;
 import com.airwallex.rpncalculator.api.Parser;
 import com.airwallex.rpncalculator.domain.Instruction;
+import com.airwallex.rpncalculator.exception.EmptyStackException;
 import com.airwallex.rpncalculator.exception.InsucientParametersException;
+import com.airwallex.rpncalculator.exception.InvalidOperatorException;
 
 import java.util.Stack;
 
@@ -16,48 +18,48 @@ import java.util.Stack;
 
 public class InputParser implements Parser {
 
-    private Stack<Double> operandStack = new Stack<>();
-    private Stack<Instruction> historyStack = new Stack<>();
-    private int currentTokenIndex = 0;
+        private Stack<Double> operandStack;
+        private Stack<Instruction> historyStack;
+//    private Stack<Double> operandStack = new Stack<>();
+//    private Stack<Instruction> historyStack = new Stack<>();
+    private int pos = 0;
 
     @Override
-    public void parse(String input) throws InsucientParametersException {
+    public void parse(String input) throws Exception {
         eval(input, false);
     }
 
-    private void eval(String input, boolean isUndoOperation) throws InsucientParametersException {
-        currentTokenIndex = 0;
-        String[] result = input.split("\\s");
-        for (String aResult : result) {
-            currentTokenIndex++;
-            processToken(aResult, isUndoOperation);
+    private void eval(String input, boolean isUndoOperation) throws Exception {
+        pos = -1;
+        String[] operandsAndOperators = input.split("\\s");
+        for (String o : operandsAndOperators) {
+            pos = pos + o.length() + 1;
+            processToken(o, isUndoOperation);
         }
     }
 
-    private void processToken(String token, boolean isUndoOperation) throws InsucientParametersException {
+    private void processToken(String token, boolean isUndoOperation) throws Exception {
         Double value = tryParseDouble(token);
         if (value == null) {
             processOperator(token, isUndoOperation);
         } else {
-            // it's a digit
-            operandStack.push(Double.parseDouble(token));
+            operandStack.push(value);
             if (!isUndoOperation) {
                 historyStack.push(null);
             }
         }
     }
 
-    private void processOperator(String operatorString, boolean isUndoOperation) throws InsucientParametersException {
+    private void processOperator(String operatorString, boolean isUndoOperation) throws Exception {
 
-        // check if there is an empty stack
         if (operandStack.isEmpty()) {
-            throw new InsucientParametersException("empty stack");
+            throw new EmptyStackException("empty stack");
         }
 
         // searching for the operator
         Operator operator = Operator.getEnum(operatorString);
         if (operator == null) {
-            throw new InsucientParametersException("invalid operator");
+            throw new InvalidOperatorException("invalid operator");
         }
 
         // clear value stack and instructions stack
@@ -98,20 +100,20 @@ public class InputParser implements Parser {
 
     private void throwInvalidOperand(String operator) throws InsucientParametersException {
         throw new InsucientParametersException(
-                String.format("operator %s (position: %d): insufficient parameters", operator, currentTokenIndex));
+                String.format("operator %s (position: %d): insufficient parameters", operator, pos));
     }
 
     private Double tryParseDouble(String str) {
         try {
             return Double.parseDouble(str);
-        } catch (NumberFormatException nfe) {
+        } catch (NumberFormatException e) {
             return null;
         }
     }
 
-    private void undoLastInstruction() throws InsucientParametersException {
+    private void undoLastInstruction() throws Exception {
         if (historyStack.isEmpty()) {
-            throw new InsucientParametersException("no operations to undo");
+            throw new InvalidOperatorException("no operations to undo");
         }
 
         Instruction lastInstruction = historyStack.pop();
@@ -126,7 +128,11 @@ public class InputParser implements Parser {
         return operandStack;
     }
 
-//    public void setOperandStack(Stack<Double> operandStack) {
-//        this.operandStack = operandStack;
-//    }
+    public void setOperandStack(Stack<Double> operandStack) {
+        this.operandStack = operandStack;
+    }
+
+    public void setHistoryStack(Stack<Instruction> historyStack) {
+        this.historyStack = historyStack;
+    }
 }
