@@ -10,21 +10,21 @@ import com.airwallex.rpncalculator.exception.InsucientParametersException;
  * @create: 2018-04-14
  **/
 
-public class Instruction {
+public class Operation {
     Operator operator;
-    Double value;
+    Double operand;
 
-    public Instruction(Operator operator, Double value) {
+    public Operation(Operator operator, Double operand) {
         this.operator = operator;
-        this.value = value;
+        this.operand = operand;
     }
 
-    public String getReverseInstruction() throws InsucientParametersException {
+    public String getReverseOperation() throws InsucientParametersException {
         if (operator.getOperandsNumber() < 1)
             throw new InsucientParametersException(String.format("invalid operation for operator %s", operator.getSymbol()));
 
         return (operator.getOperandsNumber() < 2) ?
                 String.format("%s", operator.getOpposite()) :
-                String.format("%f %s %f", value, operator.getOpposite(), value);
+                String.format("%f %s %f", operand, operator.getOpposite(), operand);
     }
 }

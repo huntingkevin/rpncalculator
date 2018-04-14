@@ -1,4 +1,4 @@
-package com.airwallex.rpncalculator.api;
+package com.airwallex.rpncalculator;
 
 import com.airwallex.rpncalculator.exception.InsucientParametersException;
 
@@ -8,6 +8,6 @@ import com.airwallex.rpncalculator.exception.InsucientParametersException;
  * @author: Ruhong Lin
  * @create: 2018-04-14
  **/
-public interface Parser {
+public interface Handler {
     void parse(String input) throws Exception;
 }

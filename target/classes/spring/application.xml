@@ -5,16 +5,16 @@
                            http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <bean id="calculator" class="com.airwallex.rpncalculator.impl.CalculatorImpl">
-        <property name="parser" ref="inputParser" />
+        <property name="handler" ref="inputHandler" />
         <property name="operandStack" ref="operandStack" />
     </bean>
 
-    <bean id="inputParser" class="com.airwallex.rpncalculator.impl.InputParser">
+    <bean id="inputHandler" class="com.airwallex.rpncalculator.impl.InputHandler">
         <property name="operandStack" ref="operandStack" />
         <property name="historyStack" ref="historyStack" />
     </bean>
 
-    <bean id="operandStack" class="java.util.Stack" />
-    <bean id="historyStack" class="java.util.Stack" />
+    <bean id="operandStack" class="java.util.LinkedList" />
+    <bean id="historyStack" class="java.util.LinkedList" />
 
 </beans>

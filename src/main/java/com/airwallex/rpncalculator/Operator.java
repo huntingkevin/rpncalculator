@@ -65,7 +65,7 @@ public enum Operator {
             throw new InvalidOperatorException("Invalid operation");
         }
     };
-    // using map for a constant lookup cost
+
     private static final Map<String, Operator> lookup = new HashMap<>();
 
     static {

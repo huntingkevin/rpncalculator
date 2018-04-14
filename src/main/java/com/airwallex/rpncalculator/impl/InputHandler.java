@@ -1,27 +1,25 @@
 package com.airwallex.rpncalculator.impl;
 
 import com.airwallex.rpncalculator.Operator;
-import com.airwallex.rpncalculator.api.Parser;
-import com.airwallex.rpncalculator.domain.Instruction;
+import com.airwallex.rpncalculator.Handler;
+import com.airwallex.rpncalculator.domain.Operation;
 import com.airwallex.rpncalculator.exception.EmptyStackException;
 import com.airwallex.rpncalculator.exception.InsucientParametersException;
 import com.airwallex.rpncalculator.exception.InvalidOperatorException;
 
-import java.util.Stack;
+import java.util.LinkedList;
 
 /**
  * @program: calculator
- * @description: parse input to a list of String
+ * @description: handle different types of input. 1. number 2. operator 3. undo 4. clear
  * @author: Ruhong Lin
  * @create: 2018-04-14
  **/
 
-public class InputParser implements Parser {
+public class InputHandler implements Handler {
 
-        private Stack<Double> operandStack;
-        private Stack<Instruction> historyStack;
-//    private Stack<Double> operandStack = new Stack<>();
-//    private Stack<Instruction> historyStack = new Stack<>();
+    private LinkedList<Double> operandStack;
+    private LinkedList<Operation> historyStack;
     private int pos = 0;
 
     @Override
@@ -56,39 +54,33 @@ public class InputParser implements Parser {
             throw new EmptyStackException("empty stack");
         }
 
-        // searching for the operator
         Operator operator = Operator.getEnum(operatorString);
         if (operator == null) {
             throw new InvalidOperatorException("invalid operator");
         }
 
-        // clear value stack and instructions stack
         if (operator == Operator.CLEAR) {
             clearStacks();
             return;
         }
 
-        // undo evaluates the last instruction in stack
         if (operator == Operator.UNDO) {
-            undoLastInstruction();
+            undoLastOperation();
             return;
         }
 
-        // Checking that there are enough operand for the operation
         if (operator.getOperandsNumber() > operandStack.size()) {
             throwInvalidOperand(operatorString);
         }
 
-        // getting operands
         Double firstOperand = operandStack.pop();
         Double secondOperand = (operator.getOperandsNumber() > 1) ? operandStack.pop() : null;
-        // calculate
         Double result = operator.calculate(firstOperand, secondOperand);
 
         if (result != null) {
             operandStack.push(result);
             if (!isUndoOperation) {
-                historyStack.push(new Instruction(Operator.getEnum(operatorString), firstOperand));
+                historyStack.push(new Operation(Operator.getEnum(operatorString), firstOperand));
             }
         }
     }
@@ -111,28 +103,24 @@ public class InputParser implements Parser {
         }
     }
 
-    private void undoLastInstruction() throws Exception {
+    private void undoLastOperation() throws Exception {
         if (historyStack.isEmpty()) {
             throw new InvalidOperatorException("no operations to undo");
         }
 
-        Instruction lastInstruction = historyStack.pop();
-        if (lastInstruction == null) {
+        Operation lastOperation = historyStack.pop();
+        if (lastOperation == null) {
             operandStack.pop();
         } else {
-            eval(lastInstruction.getReverseInstruction(), true);
+            eval(lastOperation.getReverseOperation(), true);
         }
     }
 
-    public Stack<Double> getValuesStack() {
-        return operandStack;
-    }
-
-    public void setOperandStack(Stack<Double> operandStack) {
+    public void setOperandStack(LinkedList<Double> operandStack) {
         this.operandStack = operandStack;
     }
 
-    public void setHistoryStack(Stack<Instruction> historyStack) {
+    public void setHistoryStack(LinkedList<Operation> historyStack) {
         this.historyStack = historyStack;
     }
 }

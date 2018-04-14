@@ -1,13 +1,11 @@
 package com.airwallex.rpncalculator.impl;
 
 import com.airwallex.rpncalculator.AbstractCalculator;
-import com.airwallex.rpncalculator.domain.OperandStack;
-import com.airwallex.rpncalculator.exception.InsucientParametersException;
 import org.apache.commons.lang3.StringUtils;
 
 import java.text.DecimalFormat;
+import java.util.LinkedList;
 import java.util.Scanner;
-import java.util.Stack;
 
 /**
  * @program: calculator
@@ -19,15 +17,15 @@ import java.util.Stack;
 public class CalculatorImpl extends AbstractCalculator {
 
     private static final String QUIT = "exit";
-    private InputParser parser;
-    private Stack<Double> operandStack;
+    private InputHandler handler;
+    private LinkedList<Double> operandStack;
 
     @Override
-    protected void printStack(Stack<Double> stack) {
-        DecimalFormat format = new DecimalFormat("0.##########");
+    protected void printStack(LinkedList<Double> stack) {
+        DecimalFormat format = new DecimalFormat("#.##########");
         System.out.print("Stack: ");
-        for (Double value : stack) {
-            System.out.print(format.format(value) + " ");
+        for (int i = stack.size() - 1; i >= 0; i--) {
+            System.out.print(format.format(stack.get(i)) + " ");
         }
         System.out.println();
     }
@@ -44,7 +42,7 @@ public class CalculatorImpl extends AbstractCalculator {
                 break;
             } else {
                 try {
-                    parser.parse(data);
+                    handler.parse(data);
                     printStack(operandStack);
                 } catch (Exception e) {
                     System.out.println(e.getMessage());
@@ -53,11 +51,11 @@ public class CalculatorImpl extends AbstractCalculator {
         }
     }
 
-    public void setParser(InputParser parser) {
-        this.parser = parser;
+    public void setHandler(InputHandler handler) {
+        this.handler = handler;
     }
 
-    public void setOperandStack(Stack<Double> operandStack) {
+    public void setOperandStack(LinkedList<Double> operandStack) {
         this.operandStack = operandStack;
     }
 }

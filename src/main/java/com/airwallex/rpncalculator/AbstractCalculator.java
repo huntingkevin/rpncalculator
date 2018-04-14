@@ -1,6 +1,6 @@
 package com.airwallex.rpncalculator;
 
-import java.util.Stack;
+import java.util.LinkedList;
 
 /**
  * @program: calculator
@@ -13,14 +13,10 @@ public abstract class AbstractCalculator implements Calculator {
 
     @Override
     public final void run() {
-//        init();
         calculate();
-//        printStack(stack);
     }
-
-//    protected abstract void init();
 
     protected abstract void calculate();
 
-    protected abstract void printStack(Stack<Double> stack);
+    protected abstract void printStack(LinkedList<Double> stack);
 }
