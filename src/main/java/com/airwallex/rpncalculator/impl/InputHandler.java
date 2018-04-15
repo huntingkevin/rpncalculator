@@ -34,6 +34,7 @@ public class InputHandler implements Handler {
     /**
      * Comment(shenghuai):
      * 这个pos看起来怪浪怪浪？这个做啥的
+     * ruhong: 测试下git先
      */
     private int pos = 0;
 
