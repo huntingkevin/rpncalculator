@@ -9,8 +9,17 @@ import java.util.LinkedList;
  * @create: 2018-04-15
  **/
 
+/**
+ * Comment(shenghuai):
+ * 把Caclulator扔了吧
+ * abstract class -> interface
+ */
 public abstract class AbstractCalculator implements Calculator {
 
+   /**
+    * Comment(shenghuai):
+    * 加个一句话的comment?
+    */
     @Override
     public final void run() {
         calculate();
