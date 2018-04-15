@@ -16,10 +16,25 @@ import java.util.LinkedList;
  * @create: 2018-04-14
  **/
 
+/**
+ * Comment(shenghuai):
+ * InputHandler我的理解是只处理输入相关的东西
+ * 就是比如读一行然后format出去
+ * 维护两个stack的事情按道理应该是在Caculator里？
+ * 如果要单独一个搞计算的事情这个名字看起来就比较confused
+ */
 public class InputHandler implements Handler {
 
     private LinkedList<Double> operandStack;
+    /**
+     * Comment(shenghuai):
+     * History应该是一个list里面存的是一堆stack？
+     */
     private LinkedList<Operation> historyStack;
+    /**
+     * Comment(shenghuai):
+     * 这个pos看起来怪浪怪浪？这个做啥的
+     */
     private int pos = 0;
 
     @Override
@@ -51,6 +66,10 @@ public class InputHandler implements Handler {
     private void processOperator(String operatorString, boolean isUndoOperation) throws Exception {
 
         if (operandStack.isEmpty()) {
+            /**
+             * Comment(shenghuai):
+             * 这堆Exception的shared的message string按道理应该是丢到具体class里？
+             */
             throw new EmptyStackException("empty stack");
         }
 
@@ -116,6 +135,12 @@ public class InputHandler implements Handler {
         }
     }
 
+    /**
+     * Comment(shenghuai):
+     * 这两个感觉没啥用
+     * 构造的时候就应该在了
+     * 扔到constructor里？
+     */
     public void setOperandStack(LinkedList<Double> operandStack) {
         this.operandStack = operandStack;
     }

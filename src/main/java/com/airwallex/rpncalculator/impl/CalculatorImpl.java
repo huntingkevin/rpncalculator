@@ -16,14 +16,26 @@ import java.util.Scanner;
 
 public class CalculatorImpl extends AbstractCalculator {
 
+    /**
+     * Comment(shenghuai): 如果有很多关键词什么exit undo sqrt啥的
+     * 可以搞一个Constants的类把这堆关键词丢进去
+     */
     private static final String QUIT = "exit";
     private InputHandler handler;
     private LinkedList<Double> operandStack;
 
+    /**
+     * Comment(shenghuai): 输出逻辑应该跟Caculator无关
+     * 搞一个OutputHelper来处理输出一类的事情？
+     */
     @Override
     protected void printStack(LinkedList<Double> stack) {
         DecimalFormat format = new DecimalFormat("#.##########");
         System.out.print("Stack: ");
+        /**
+         * Comment(shenghuai):
+         * nit: 用StringBuilder
+         */
         for (int i = stack.size() - 1; i >= 0; i--) {
             System.out.print(format.format(stack.get(i)) + " ");
         }
@@ -35,6 +47,9 @@ public class CalculatorImpl extends AbstractCalculator {
         Scanner input = new Scanner(System.in);
 
         while (true) {
+            /**
+             * Comment(shenghuai): 字符串相关的在InputHandler里处理掉就好
+             */
             String data = input.nextLine();
             if (StringUtils.isBlank(data)) {
                 continue;
@@ -51,6 +66,10 @@ public class CalculatorImpl extends AbstractCalculator {
         }
     }
 
+    /**
+     * Comment(shenghuai): 这两东西应该是Caculator的dependency?
+     * 直接丢构造函数里？
+     */
     public void setHandler(InputHandler handler) {
         this.handler = handler;
     }
