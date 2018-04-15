@@ -8,7 +8,7 @@ package com.airwallex.rpncalculator.exception;
  **/
 
 public class EmptyStackException extends Exception {
-    public EmptyStackException(String message) {
-        super(message);
+    public EmptyStackException() {
+        super("Empty Stack");
     }
 }

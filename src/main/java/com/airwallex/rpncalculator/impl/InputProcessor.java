@@ -1,13 +1,13 @@
 package com.airwallex.rpncalculator.impl;
 
 import com.airwallex.rpncalculator.Operator;
-import com.airwallex.rpncalculator.Handler;
-import com.airwallex.rpncalculator.domain.Operation;
+import com.airwallex.rpncalculator.Processor;
+import com.airwallex.rpncalculator.domain.OperationHistory;
 import com.airwallex.rpncalculator.exception.EmptyStackException;
 import com.airwallex.rpncalculator.exception.InsucientParametersException;
 import com.airwallex.rpncalculator.exception.InvalidOperatorException;
-
-import java.util.LinkedList;
+import com.airwallex.rpncalculator.service.HistoryStackManager;
+import com.airwallex.rpncalculator.service.OperandStackManager;
 
 /**
  * @program: calculator
@@ -16,29 +16,14 @@ import java.util.LinkedList;
  * @create: 2018-04-14
  **/
 
-/**
- * Comment(shenghuai):
- * InputHandler我的理解是只处理输入相关的东西
- * 就是比如读一行然后format出去
- * 维护两个stack的事情按道理应该是在Caculator里？
- * 如果要单独一个搞计算的事情这个名字看起来就比较confused
- */
-public class InputHandler implements Handler {
+public class InputProcessor implements Processor {
 
-    private LinkedList<Double> operandStack;
-    /**
-     * Comment(shenghuai):
-     * History应该是一个list里面存的是一堆stack？
-     */
-    private LinkedList<Operation> historyStack;
-    /**
-     * Comment(shenghuai):
-     * 这个pos看起来怪浪怪浪？这个做啥的
-     */
+    private OperandStackManager operandStackManager;
+    private HistoryStackManager historyStackManager;
     private int pos = 0;
 
     @Override
-    public void parse(String input) throws Exception {
+    public void process(String input) throws Exception {
         eval(input, false);
     }
 
@@ -56,26 +41,22 @@ public class InputHandler implements Handler {
         if (value == null) {
             processOperator(token, isUndoOperation);
         } else {
-            operandStack.push(value);
+            operandStackManager.add(value);
             if (!isUndoOperation) {
-                historyStack.push(null);
+                historyStackManager.add(null);
             }
         }
     }
 
     private void processOperator(String operatorString, boolean isUndoOperation) throws Exception {
 
-        if (operandStack.isEmpty()) {
-            /**
-             * Comment(shenghuai):
-             * 这堆Exception的shared的message string按道理应该是丢到具体class里？
-             */
-            throw new EmptyStackException("empty stack");
+        if (operandStackManager.isEmpty()) {
+            throw new EmptyStackException();
         }
 
         Operator operator = Operator.getEnum(operatorString);
         if (operator == null) {
-            throw new InvalidOperatorException("invalid operator");
+            throw new InvalidOperatorException();
         }
 
         if (operator == Operator.CLEAR) {
@@ -88,25 +69,25 @@ public class InputHandler implements Handler {
             return;
         }
 
-        if (operator.getOperandsNumber() > operandStack.size()) {
+        if (operator.getOperandsNumber() > operandStackManager.size()) {
             throwInvalidOperand(operatorString);
         }
 
-        Double firstOperand = operandStack.pop();
-        Double secondOperand = (operator.getOperandsNumber() > 1) ? operandStack.pop() : null;
+        Double firstOperand = operandStackManager.getNext();
+        Double secondOperand = (operator.getOperandsNumber() > 1) ? operandStackManager.getNext() : null;
         Double result = operator.calculate(firstOperand, secondOperand);
 
         if (result != null) {
-            operandStack.push(result);
+            operandStackManager.add(result);
             if (!isUndoOperation) {
-                historyStack.push(new Operation(Operator.getEnum(operatorString), firstOperand));
+                historyStackManager.add(new OperationHistory(Operator.getEnum(operatorString), firstOperand));
             }
         }
     }
 
     private void clearStacks() {
-        operandStack.clear();
-        historyStack.clear();
+        operandStackManager.clear();
+        historyStackManager.clear();
     }
 
     private void throwInvalidOperand(String operator) throws InsucientParametersException {
@@ -123,29 +104,23 @@ public class InputHandler implements Handler {
     }
 
     private void undoLastOperation() throws Exception {
-        if (historyStack.isEmpty()) {
+        if (historyStackManager.isEmpty()) {
             throw new InvalidOperatorException("no operations to undo");
         }
 
-        Operation lastOperation = historyStack.pop();
-        if (lastOperation == null) {
-            operandStack.pop();
+        OperationHistory lastOperationHistory = historyStackManager.getNext();
+        if (lastOperationHistory == null) {
+            operandStackManager.getNext();
         } else {
-            eval(lastOperation.getReverseOperation(), true);
+            eval(lastOperationHistory.getReverseOperation(), true);
         }
     }
 
-    /**
-     * Comment(shenghuai):
-     * 这两个感觉没啥用
-     * 构造的时候就应该在了
-     * 扔到constructor里？
-     */
-    public void setOperandStack(LinkedList<Double> operandStack) {
-        this.operandStack = operandStack;
+    public void setOperandStackManager(OperandStackManager operandStackManager) {
+        this.operandStackManager = operandStackManager;
     }
 
-    public void setHistoryStack(LinkedList<Operation> historyStack) {
-        this.historyStack = historyStack;
+    public void setHistoryStackManager(HistoryStackManager historyStackManager) {
+        this.historyStackManager = historyStackManager;
     }
 }

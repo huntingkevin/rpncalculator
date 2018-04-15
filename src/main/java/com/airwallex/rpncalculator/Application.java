@@ -3,7 +3,12 @@ package com.airwallex.rpncalculator;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-
+/**
+ * @program: calculator
+ * @description: Application entrance
+ * @author: Ruhong Lin
+ * @create: 2018-04-15
+ **/
 public class Application {
 
     public static void main(String[] args) {

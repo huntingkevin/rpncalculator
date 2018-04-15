@@ -8,6 +8,10 @@ package com.airwallex.rpncalculator.exception;
  **/
 
 public class InvalidOperatorException extends Exception {
+    public InvalidOperatorException() {
+        super("Invalid Operator");
+    }
+
     public InvalidOperatorException(String message) {
         super(message);
     }

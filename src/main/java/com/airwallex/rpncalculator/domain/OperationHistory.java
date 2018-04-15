@@ -10,11 +10,11 @@ import com.airwallex.rpncalculator.exception.InsucientParametersException;
  * @create: 2018-04-14
  **/
 
-public class Operation {
+public class OperationHistory {
     Operator operator;
     Double operand;
 
-    public Operation(Operator operator, Double operand) {
+    public OperationHistory(Operator operator, Double operand) {
         this.operator = operator;
         this.operand = operand;
     }

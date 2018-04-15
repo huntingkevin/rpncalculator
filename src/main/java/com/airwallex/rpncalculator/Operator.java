@@ -11,7 +11,7 @@ import static java.lang.Math.sqrt;
 
 /**
  * @program: calculator
- * @description:
+ * @description: Define operators can be used and opersite operation for undo.
  * @author: Ruhong Lin
  * @create: 2018-04-14
  **/
@@ -42,7 +42,7 @@ public enum Operator {
         }
     },
 
-    SQUAREROOT("sqrt", "pow", 1) {
+    SQRT("sqrt", "pow", 1) {
         public Double calculate(Double firstOperand, Double secondOperand) {
             return sqrt(firstOperand);
         }
@@ -56,13 +56,13 @@ public enum Operator {
 
     UNDO("undo", null, 0) {
         public Double calculate(Double firstOperand, Double secondOperand) throws InvalidOperatorException {
-            throw new InvalidOperatorException("Invalid operation");
+            throw new InvalidOperatorException();
         }
     },
 
     CLEAR("clear", null, 0) {
         public Double calculate(Double firstOperand, Double secondOperand) throws InvalidOperatorException {
-            throw new InvalidOperatorException("Invalid operation");
+            throw new InvalidOperatorException();
         }
     };
 
